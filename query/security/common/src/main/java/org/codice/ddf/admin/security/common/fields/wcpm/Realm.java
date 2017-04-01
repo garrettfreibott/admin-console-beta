@@ -75,4 +75,12 @@ public class Realm extends BaseEnumField<String> {
             return KARAF;
         }
     }
+
+    public Realm getRealmFromValue(String value) {
+        return new Realm(getEnumValues().stream()
+                .filter(field -> field.getValue()
+                        .equals(value))
+                .findFirst()
+                .get());
+    }
 }

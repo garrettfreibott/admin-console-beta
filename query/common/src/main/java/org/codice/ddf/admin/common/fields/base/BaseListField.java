@@ -88,6 +88,12 @@ public abstract class BaseListField<T extends Field> extends BaseField<List>
     }
 
     @Override
+    public BaseListField addAll(List<T> values) {
+        fields.addAll(values);
+        return this;
+    }
+
+    @Override
     public List<Message> validate() {
         // TODO: tbatie - 3/16/17 - Validate list field
         return new ArrayList<>();

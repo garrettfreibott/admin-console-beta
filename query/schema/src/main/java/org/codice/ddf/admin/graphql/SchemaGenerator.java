@@ -20,6 +20,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.codice.ddf.admin.api.action.ActionCreator;
+import org.codice.ddf.admin.configurator.Configurator;
+import org.codice.ddf.admin.configurator.ConfiguratorFactory;
+import org.codice.ddf.admin.configurator.impl.ConfiguratorFactoryImpl;
 import org.codice.ddf.admin.ldap.actions.LdapActionCreator;
 import org.codice.ddf.admin.security.sts.StsActionCreator;
 import org.codice.ddf.admin.security.wcpm.actions.WcpmActionCreator;
@@ -34,11 +37,13 @@ public class SchemaGenerator {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         GraphQLServletImpl servlet = new GraphQLServletImpl();
-        final List<ActionCreator> GRAPHQL_PROVIDERS = ImmutableList.of(new StsActionCreator(),
-                new ConnectionActionCreator(),
-                new LdapActionCreator(),
-                new SourceActionCreator(),
-                new WcpmActionCreator());
+        final List<ActionCreator> GRAPHQL_PROVIDERS =
+                ImmutableList.of(
+                        new StsActionCreator(),
+                        new ConnectionActionCreator(),
+                        new LdapActionCreator(),
+                        new SourceActionCreator(),
+                        new WcpmActionCreator(new ConfiguratorFactoryImpl()));
 
         servlet.setActionCreators(GRAPHQL_PROVIDERS);
         String schemaResult = servlet.executeQuery(IntrospectionQuery.INTROSPECTION_QUERY);

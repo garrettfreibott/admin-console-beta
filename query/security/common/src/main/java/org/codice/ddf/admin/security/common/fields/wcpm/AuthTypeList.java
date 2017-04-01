@@ -13,6 +13,8 @@
  **/
 package org.codice.ddf.admin.security.common.fields.wcpm;
 
+import java.util.List;
+
 import org.codice.ddf.admin.common.fields.base.BaseListField;
 
 public class AuthTypeList extends BaseListField<AuthType> {
@@ -23,6 +25,11 @@ public class AuthTypeList extends BaseListField<AuthType> {
 
     public AuthTypeList() {
         super(DEFAULT_FIELD_NAME, DESCRIPTION, new AuthType());
+    }
+
+    public AuthTypeList(List<AuthType> authTypes) {
+        this();
+        addAll(authTypes);
     }
 
     @Override

@@ -15,7 +15,7 @@ package org.codice.ddf.admin.api.action;
 
 import java.util.List;
 
-public interface ActionCreator {
+public interface  ActionCreator {
     String name();
 
     String typeName();
