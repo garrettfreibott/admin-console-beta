@@ -120,4 +120,11 @@ public class AuthType extends BaseEnumField<String> {
         }
     }
 
+    public AuthType getAuthTypeFromValue(String value) {
+        return new AuthType(getEnumValues().stream()
+                .filter(field -> field.getValue().equalsIgnoreCase(value))
+                .findFirst()
+                .get());
+    }
+
 }

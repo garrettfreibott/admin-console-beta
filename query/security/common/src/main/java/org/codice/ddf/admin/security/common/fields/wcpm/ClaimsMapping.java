@@ -13,6 +13,9 @@
  **/
 package org.codice.ddf.admin.security.common.fields.wcpm;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codice.ddf.admin.common.fields.base.BaseListField;
 
 public class ClaimsMapping extends BaseListField<ClaimsMapEntry> {
@@ -29,6 +32,16 @@ public class ClaimsMapping extends BaseListField<ClaimsMapEntry> {
     public ClaimsMapping add(ClaimsMapEntry value) {
         super.add(value);
         return this;
+    }
+
+    public Map<String, String> toMap() {
+        Map<String, String> claimsMap = new HashMap<>();
+        getList().forEach(entry -> claimsMap.put(entry.claim(), entry.claimValue()));
+        return claimsMap;
+    }
+
+    public void setValue(Map<String, String> claims) {
+
     }
 
 }

@@ -19,4 +19,5 @@ public interface ListField<T extends Field> extends Field<List> {
     T getListFieldType();
     List<T> getList();
     ListField add(T field);
+    ListField addAll(List<T> fields);
 }

@@ -46,6 +46,13 @@ public class ClaimsMapEntry extends BaseObjectField {
         return this;
     }
 
+    public String claim() {
+        return claim.getValue();
+    }
+
+    public String claimValue() {
+        return claimValue.getValue();
+    }
 
     @Override
     public List<Field> getFields() {

@@ -13,7 +13,10 @@
  **/
 package org.codice.ddf.admin.security.common.fields.wcpm;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.codice.ddf.admin.api.fields.Field;
 import org.codice.ddf.admin.common.fields.base.BaseObjectField;
@@ -25,12 +28,18 @@ import com.google.common.collect.ImmutableList;
 public class ContextPolicyBin extends BaseObjectField {
 
     public static final String DEFAULT_FIELD_NAME = "bin";
-    public static final String FIELD_TYPE_NAME  ="ContextPolicyBin";
-    public static final String DESCRIPTION = "Represents a policy being applied to a set of context paths.";
+
+    public static final String FIELD_TYPE_NAME = "ContextPolicyBin";
+
+    public static final String DESCRIPTION =
+            "Represents a policy being applied to a set of context paths.";
 
     private ContextPaths contexts;
+
     private AuthTypeList authTypes;
+
     private Realm realm;
+
     private ClaimsMapping claimsMapping;
 
     public ContextPolicyBin() {
@@ -39,6 +48,11 @@ public class ContextPolicyBin extends BaseObjectField {
         authTypes = new AuthTypeList();
         realm = new Realm();
         claimsMapping = new ClaimsMapping();
+    }
+
+    public ContextPolicyBin realm(String realm) {
+        this.realm = new Realm().getRealmFromValue(realm);
+        return this;
     }
 
     public ContextPolicyBin realm(Realm realm) {
@@ -51,14 +65,68 @@ public class ContextPolicyBin extends BaseObjectField {
         return this;
     }
 
+    public ContextPolicyBin addContextPath(String contextPath) {
+        contexts.add(new ContextPath(contextPath));
+        return this;
+    }
+
+    public ContextPolicyBin addClaimsMapping(String claim, String claimValue) {
+        claimsMapping.add(new ClaimsMapEntry().claim(claim)
+                .claimValue(claimValue));
+        return this;
+    }
+
     public ContextPolicyBin addClaimsMapping(ClaimsMapEntry entry) {
         claimsMapping.add(entry);
+        return this;
+    }
+
+    public ContextPolicyBin addClaimsMap(Map<String, String> claimsMap) {
+        List<ClaimsMapEntry> claims = claimsMap.entrySet()
+                .stream()
+                .map(entry -> new ClaimsMapEntry().claim(entry.getKey())
+                        .claimValue(entry.getValue()))
+                .collect(Collectors.toList());
+        claimsMapping.addAll(claims);
+        return this;
+    }
+
+    public ContextPolicyBin addAuthType(String authType) {
+        authTypes.add(new AuthType().getAuthTypeFromValue(authType));
         return this;
     }
 
     public ContextPolicyBin addAuthType(AuthType authType) {
         authTypes.add(authType);
         return this;
+    }
+
+    public ContextPolicyBin authTypes(Collection<String> authTypes) {
+        authTypes.stream()
+                .forEach(authType -> addAuthType(authType));
+        return this;
+    }
+
+    public ContextPolicyBin contexts(Collection<String> contexts) {
+        contexts.stream()
+                .forEach(context -> addContextPath(context));
+        return this;
+    }
+
+    public List<String> contexts() {
+        return contexts.getValue();
+    }
+
+    public List<String> authTypes() {
+        return authTypes.getValue();
+    }
+
+    public String realm() {
+        return realm.getValue();
+    }
+
+    public Map<String, String> claimsMapping() {
+        return claimsMapping.toMap();
     }
 
     @Override

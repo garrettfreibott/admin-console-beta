@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.codice.ddf.admin.api.action.Action;
 import org.codice.ddf.admin.common.actions.BaseActionCreator;
+import org.codice.ddf.admin.configurator.ConfiguratorFactory;
 import org.codice.ddf.admin.security.wcpm.actions.discover.GetAuthTypes;
 import org.codice.ddf.admin.security.wcpm.actions.discover.GetContextPolicies;
 import org.codice.ddf.admin.security.wcpm.actions.discover.GetRealms;
@@ -31,13 +32,17 @@ public class WcpmActionCreator extends BaseActionCreator {
     public static final String TYPE_NAME = "WebContextPolicyManager";
     public static final String DESCRIPTION = "Manages policies for the system's endpoints";
 
-    public WcpmActionCreator() {
+    private ConfiguratorFactory configuratorFactory;
+
+    public WcpmActionCreator(ConfiguratorFactory configuratorFactory) {
         super(NAME, TYPE_NAME, DESCRIPTION);
+        this.configuratorFactory = configuratorFactory;
     }
 
     @Override
     public List<Action> getDiscoveryActions() {
-        return ImmutableList.of(new GetAuthTypes(), new GetRealms(), new GetWhiteListContexts(), new GetContextPolicies());
+        return ImmutableList.of(new GetAuthTypes(configuratorFactory.getConfigurator()), new GetRealms(), new GetWhiteListContexts(
+                configuratorFactory.getConfigurator()), new GetContextPolicies(configuratorFactory.getConfigurator()));
     }
 
     @Override

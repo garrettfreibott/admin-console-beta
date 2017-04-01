@@ -25,6 +25,11 @@ public class ContextPath extends StringField {
         super(DEFAULT_FIELD_NAME, FIELD_TYPE_NAME, DESCRIPTION);
     }
 
+    public ContextPath(String path) {
+        this();
+        setValue(path);
+    }
+
     @Override
     public void setValue(String value) {
         super.setValue(value);
