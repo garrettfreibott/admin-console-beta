@@ -46,7 +46,6 @@ public class PolicyManagerServiceProperties {
     // TODO: tbatie - 1/17/17 - (Ticket) Get rid of this PolicyManager reference and break this dependency.
     public ContextPolicies policyManagerSettingsToBins(PolicyManager policyManager) {
         List<ContextPolicyBin> policies = new ArrayList<>();
-        ContextPolicyBin policyField = new ContextPolicyBin();
 
         Collection<ContextPolicy> allPolicies = policyManager.getAllContextPolicies();
         for (ContextPolicy policy : allPolicies) {

@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableList;
 
 public class SaveContextPolices extends BaseAction<ContextPolicies> {
 
-    public static final String DEFAULT_FIELD_NAME = "saveContextPolicies";
+    public static final String ACTION_ID = "saveContextPolicies";
 
     public static final String DESCRIPTION =
             "Saves a list of policies to be applied to their corresponding context paths.";
@@ -46,8 +46,9 @@ public class SaveContextPolices extends BaseAction<ContextPolicies> {
     private PolicyManagerServiceProperties wcpmServiceProps = new PolicyManagerServiceProperties();
 
     public SaveContextPolices(Configurator configurator) {
-        super(DEFAULT_FIELD_NAME, DESCRIPTION, new ContextPolicies());
+        super(ACTION_ID, DESCRIPTION, new ContextPolicies());
         contextPolicies = new ContextPolicies();
+        contextPolicies.isRequired(true);
         this.configurator = configurator;
     }
 
@@ -71,6 +72,7 @@ public class SaveContextPolices extends BaseAction<ContextPolicies> {
                     contextPoliciesToPolicyManagerProps(contextPolicies),
                     true);
 
+            // TODO: 4/14/17 Fix the contextPolicies.toString(), this will print the objects name
             OperationReport configReport = configurator.commit(
                     "Web Context Policy saved with details: {}",
                     contextPolicies.toString());

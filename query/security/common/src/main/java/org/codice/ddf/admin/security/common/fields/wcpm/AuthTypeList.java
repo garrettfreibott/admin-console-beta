@@ -54,10 +54,12 @@ public class AuthTypeList extends BaseListField<AuthType> {
             return validationMsgs;
         }
 
-        validationMsgs = getList().stream()
-                .map(field -> (List<Message>) field.validate())
-                .flatMap(l -> l.stream())
-                .collect(Collectors.toList());
+        if(getList() != null) {
+            validationMsgs = getList().stream()
+                    .map(field -> (List<Message>) field.validate())
+                    .flatMap(l -> l.stream())
+                    .collect(Collectors.toList());
+        }
 
         return validationMsgs;
     }

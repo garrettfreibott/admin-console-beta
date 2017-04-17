@@ -74,6 +74,8 @@ public class ContextPolicyServiceProperties {
     }
 
     public static Map<String, Object> whiteListToPolicyManagerProps(ContextPaths contexts) {
-        return ImmutableMap.of(WHITE_LIST_CONTEXT, contexts.getValue());
+        List<String> serviceContexts =
+                contexts.getValue() == null ? new ArrayList<>() : contexts.getValue();
+        return ImmutableMap.of(WHITE_LIST_CONTEXT, serviceContexts);
     }
 }
