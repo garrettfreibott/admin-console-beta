@@ -13,10 +13,8 @@
  **/
 package org.codice.ddf.admin.ldap.actions.commons.services;
 
-import static org.codice.ddf.admin.ldap.actions.commons.services.LdapClaimsHandlerServiceProperties.LDAP_CLAIMS_HANDLER_MANAGED_SERVICE_FACTORY_PID;
-import static org.codice.ddf.admin.ldap.actions.commons.services.LdapLoginServiceProperties.LDAP_LOGIN_MANAGED_SERVICE_FACTORY_PID;
-
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,16 +25,26 @@ import org.codice.ddf.admin.ldap.fields.config.LdapConfigurationField;
 
 public class LdapServiceCommons {
 
+    // TODO: 4/19/17 MOVE ME TO THE COMMONS
+    public Map<String, Map<String, Object>> getLdapLoginManagedServices(ConfiguratorFactory configuratorFactory) {
+       return configuratorFactory.getConfigReader()
+                .getManagedServiceConfigs(LdapLoginServiceProperties.LDAP_LOGIN_MANAGED_SERVICE_FACTORY_PID);
+    }
+
+    // TODO: 4/19/17 MOVE ME TO THE COMMONS
+    public Map<String, Map<String, Object>> getLdapClaimsHandlerManagedServices(ConfiguratorFactory configuratorFactory) {
+        return configuratorFactory.getConfigReader()
+                .getManagedServiceConfigs(LdapClaimsHandlerServiceProperties.LDAP_CLAIMS_HANDLER_MANAGED_SERVICE_FACTORY_PID);
+    }
+
     public ListField<LdapConfigurationField> getLdapConfigurations(ConfiguratorFactory configuratorFactory) {
-        List<LdapConfigurationField> ldapLoginConfigs = configuratorFactory.getConfigReader()
-                .getManagedServiceConfigs(LDAP_LOGIN_MANAGED_SERVICE_FACTORY_PID)
+        List<LdapConfigurationField> ldapLoginConfigs = getLdapLoginManagedServices(configuratorFactory)
                 .values()
                 .stream()
                 .map(LdapLoginServiceProperties::ldapLoginServiceToLdapConfiguration)
                 .collect(Collectors.toList());
 
-        List<LdapConfigurationField> ldapClaimsHandlerConfigs = configuratorFactory.getConfigReader()
-                .getManagedServiceConfigs(LDAP_CLAIMS_HANDLER_MANAGED_SERVICE_FACTORY_PID)
+        List<LdapConfigurationField> ldapClaimsHandlerConfigs = getLdapClaimsHandlerManagedServices(configuratorFactory)
                 .values()
                 .stream()
                 .map((props) -> LdapClaimsHandlerServiceProperties.ldapClaimsHandlerServiceToLdapConfig(
