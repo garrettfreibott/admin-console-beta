@@ -9,6 +9,7 @@ import Ldap from './wizards/ldap'
 import Sources from './wizards/sources'
 import { Home } from './home'
 import Wcpm from './adminTools/webContextPolicyManager'
+import WcpmWizard from './wizards/wcpm'
 
 import Banners from 'system-usage/Banners'
 import Modal from 'system-usage/Modal'
@@ -79,6 +80,7 @@ export const routes = {
     { path: 'ldap', component: Ldap },
     { path: 'sources', component: Sources },
     { path: 'web-context-policy-manager', component: Wcpm },
+    { path: 'wcpm-wizard', component: WcpmWizard },
     { path: 'graphiql', component: GraphiQL }
   ]
 }
