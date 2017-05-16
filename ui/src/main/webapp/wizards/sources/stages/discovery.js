@@ -1,28 +1,23 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import React from "react"
+import { connect } from "react-redux"
+import Mount from "react-mount"
+import { gql, graphql, withApollo } from "react-apollo"
 
-import { getAllConfig, getMessages } from 'admin-wizard/reducer'
-import { getDiscoveryType } from '../reducer'
-import { testSources, setDiscoveryType } from '../actions'
+import { getDiscoveryType } from "../reducer"
+import { testSources, setDiscoveryType, changeStage } from "../actions"
+import { NavPanes, SideLines } from "../components"
+import { setDefaults } from "../../../actions"
+import { queries as discoverSources } from "../graphql-queries/source-discovery"
 
-import Title from 'components/Title'
-import Description from 'components/Description'
-import ActionGroup from 'components/ActionGroup'
-import Action from 'components/Action'
-import Message from 'components/Message'
-import FlatButton from 'material-ui/FlatButton'
+import Title from "components/Title"
+import Description from "components/Description"
+import ActionGroup from "components/ActionGroup"
+import Action from "components/Action"
+import Message from "components/Message"
+import { getAllConfig, getMessages } from "admin-wizard/reducer"
+import { Input, Password, Hostname, Port } from "admin-wizard/inputs"
 
-import {
-  Input,
-  Password,
-  Hostname,
-  Port
-} from 'admin-wizard/inputs'
-
-import { NavPanes, SideLines } from '../components'
-
-import { setDefaults } from '../../../actions'
-import Mount from 'react-mount'
+import FlatButton from "material-ui/FlatButton"
 
 const isEmpty = (string) => {
   return !string
@@ -37,7 +32,7 @@ const discoveryStageDefaults = {
   sourcePort: 8993
 }
 
-const DiscoveryStageView = ({ messages, testSources, setDefaults, configs, discoveryType, setDiscoveryType }) => {
+const DiscoveryStageView = ({ messages, testSources, setDefaults, configs, discoveryType, setDiscoveryType, data, changeStage, client }) => {
   const nextShouldBeDisabled = () => {
     // checks that username & password are either both filled out or both empty (because it's optional)
     if (isBlank(configs.sourceUserName) !== isEmpty(configs.sourceUserPassword)) {
@@ -113,7 +108,24 @@ const DiscoveryStageView = ({ messages, testSources, setDefaults, configs, disco
               primary
               label='Check'
               disabled={nextShouldBeDisabled()}
-              onClick={() => testSources('sources', 'sourceSelectionStage', 'discoveryStage', discoveryType)} />
+              onClick={ (discoveryType === 'hostnamePort') ?
+                  () => {client.query(
+                    discoverByAddress({
+                    hostname: configs.hostname,
+                    port: configs.port,
+                    username: configs.username,
+                    password: configs.password
+                  }))
+                    .then(({data}) => {console.log({data}); console.log('this thing')})
+                    .catch(() => console.log("BROKEN"))}
+                : () => client.query(discoverByURL({
+                    url: configs.url,
+                    username: configs.username,
+                    password: configs.password
+                  }))
+                .then(() => changeStage('sourceSelectionStage'))
+                .catch(() => console.log("BROKEN"))
+              } />
           </ActionGroup>
         </div>
       </NavPanes>
@@ -121,12 +133,64 @@ const DiscoveryStageView = ({ messages, testSources, setDefaults, configs, disco
   )
 }
 
-export default connect((state) => ({
+let DiscoveryStage = connect((state) => ({
   configs: getAllConfig(state),
   messages: getMessages(state, 'discoveryStage'),
   discoveryType: getDiscoveryType(state)
 }), {
   testSources,
   setDefaults,
-  setDiscoveryType
+  setDiscoveryType,
+  changeStage
 })(DiscoveryStageView)
+
+const discoverByAddress = (vars) => (
+  (vars.username && vars.password) ? {
+    query: discoverSources.all,
+    variables: {
+      address: {
+        hostname: vars.hostname,
+        port: vars.port
+      },
+      creds: {
+        username: vars.username,
+        password: vars.password
+      }
+    }
+  } : {
+    query: discoverSources.all,
+    variables: {
+      address: {
+        hostname: vars.hostname,
+        port: vars.port
+      }
+    }
+  }
+)
+
+const discoverByURL = (vars) => (
+  (vars.username && vars.password) ? {
+    query: discoverSources.all,
+    variables: {
+      address: {
+        url: vars.url
+      },
+      creds: {
+        username: vars.username,
+        password: vars.password
+      }
+    }
+  } : {
+    query: discoverSources.all,
+    variables: {
+      address: {
+        url: vars.url
+      }
+    }
+  }
+)
+
+export default withApollo(DiscoveryStage)
+
+
+
